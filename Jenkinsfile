@@ -73,8 +73,27 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy') {
+        stage('Deploy staging') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            environment {
+                NETLIFY_SITE_ID = 'bd61fbd8-7752-4e66-b012-199b24160882'
+                NETLIFY_AUTH_TOKEN = credentials('netlify_id')
+            }
+            steps {
+                sh '''
+                echo "Deploy staging"
+                npm install netlify-cli@20.1.1
+                node_modules/.bin/netlify status
+                node_modules/.bin/netlify deploy --dir=build
+                '''
+            }
+        }
+        stage('Deploy production') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -107,14 +126,14 @@ pipeline {
                     steps {
                         sh '''
                         echo "E2E Stage"
-                        npx playwright test --reporter=html
+                        // npx playwright test --reporter=html
                         '''
                     }
-                    post {
-                        always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E Report', reportTitles: '', useWrapperFileDirectly: true])
-                        }
-                    }
+                    // post {
+                    //     always {
+                    //         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+                    //     }
+                    // }
                 }
     }
 }
