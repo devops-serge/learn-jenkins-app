@@ -81,11 +81,15 @@ pipeline {
                     reuseNode true
                 }
             }
+            environment {
+                NETLIFY_SITE_ID = '55f54b1c-e3dc-4028-9ed1-ae6c94832252'
+            }
             steps {
                 sh '''
                 npm install netlify-cli@20.1.1
                 node_modules/.bin/netlify --version
                 '''
+                echo $NETLIFY_SITE_ID
             }
         }
         
