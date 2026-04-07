@@ -120,27 +120,27 @@ pipeline {
                 '''
             }
         }
-                stage('E2E') {
-                    agent {
-                        docker {
-                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                            reuseNode true
-                        }
-                    }
-                    environment {
-                        CI_ENVIRONMENT_URL = 'https://iridescent-trifle-2bfeba.netlify.app'
-                    }
-                    steps {
-                        sh '''
-                        echo "E2E Stage"
-                        // npx playwright test --reporter=html
-                        '''
-                    }
-                    // post {
-                    //     always {
-                    //         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E Report', reportTitles: '', useWrapperFileDirectly: true])
-                    //     }
-                    // }
-                }
-    }
+    //             stage('E2E') {
+    //                 agent {
+    //                     docker {
+    //                         image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+    //                         reuseNode true
+    //                     }
+    //                 }
+    //                 environment {
+    //                     CI_ENVIRONMENT_URL = 'https://iridescent-trifle-2bfeba.netlify.app'
+    //                 }
+    //                 steps {
+    //                     sh '''
+    //                     echo "E2E Stage"
+    //                     // npx playwright test --reporter=html
+    //                     '''
+    //                 }
+    //                 post {
+    //                     always {
+    //                         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+    //                     }
+    //                 }
+    //             }
+    // }
 }
