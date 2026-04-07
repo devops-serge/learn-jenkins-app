@@ -83,7 +83,7 @@ pipeline {
             }
             environment {
                 NETLIFY_SITE_ID = '55f54b1c-e3dc-4028-9ed1-ae6c94832252'
-                NETLIFY_AUTH_TOKEN = credentialsf('netlify_id')
+                NETLIFY_AUTH_TOKEN = credentials('netlify_id')
             }
             steps {
                 sh '''
