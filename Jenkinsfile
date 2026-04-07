@@ -118,5 +118,3 @@ pipeline {
                 }
     }
 }
-
-CI_ENVIRONMENT_URL
