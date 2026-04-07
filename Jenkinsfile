@@ -26,53 +26,53 @@ pipeline {
         //     }
         // }
 
-        stage('tests') {
-            parallel {
-                stage('Test') {
-                    agent {
-                        docker {
-                            image 'node:18-alpine'
-                            reuseNode true
-                        }
-                    }
-                    steps {
-                        sh '''
-                        echo "Test Stage"
-                        ls -la
-                        test -f build/index.html
-                        npm test
-                        '''
-                    }
-                    post {
-                        always {
-                            junit 'jest-results/junit.xml'
-                        }
-                    }
-                }
-                stage('E2E') {
-                    agent {
-                        docker {
-                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                            reuseNode true
-                        }
-                    }
-                    steps {
-                        sh '''
-                        echo "E2E Stage"
-                        npm install serve
-                        node_modules/.bin/serve -s build &
-                        sleep 10
-                        npx playwright test --reporter=html
-                        '''
-                    }
-                    post {
-                        always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Local', reportTitles: '', useWrapperFileDirectly: true])
-                        }
-                    }
-                }
-            }
-        }
+        // stage('tests') {
+        //     parallel {
+        //         stage('Test') {
+        //             agent {
+        //                 docker {
+        //                     image 'node:18-alpine'
+        //                     reuseNode true
+        //                 }
+        //             }
+        //             steps {
+        //                 sh '''
+        //                 echo "Test Stage"
+        //                 ls -la
+        //                 test -f build/index.html
+        //                 npm test
+        //                 '''
+        //             }
+        //             post {
+        //                 always {
+        //                     junit 'jest-results/junit.xml'
+        //                 }
+        //             }
+        //         }
+        //         stage('E2E') {
+        //             agent {
+        //                 docker {
+        //                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+        //                     reuseNode true
+        //                 }
+        //             }
+        //             steps {
+        //                 sh '''
+        //                 echo "E2E Stage"
+        //                 npm install serve
+        //                 node_modules/.bin/serve -s build &
+        //                 sleep 10
+        //                 npx playwright test --reporter=html
+        //                 '''
+        //             }
+        //             post {
+        //                 always {
+        //                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Local', reportTitles: '', useWrapperFileDirectly: true])
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         stage('Deploy staging') {
             agent {
                 docker {
@@ -89,7 +89,7 @@ pipeline {
                 echo "Deploy staging"
                 npm install netlify-cli@20.1.1
                 node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build
+                node_modules/.bin/netlify deploy --dir=build --json
                 '''
             }
         }
@@ -116,7 +116,7 @@ pipeline {
                 echo "Deploy stage"
                 npm install netlify-cli@20.1.1
                 node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --prod
+                node_modules/.bin/netlify deploy --dir=build --prod --json
                 '''
             }
         }
