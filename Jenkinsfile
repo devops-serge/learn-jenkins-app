@@ -6,7 +6,7 @@ pipeline {
         This is a comment 1
         */
         // This is a comment 2
-        
+
         // stage('Build') {
         //     agent {
         //         docker {
@@ -83,8 +83,8 @@ pipeline {
             }
             steps {
                 sh '''
-                npm install netlify-cli -g
-                netlify --version
+                npm install netlify-cli
+                node_modules/.bin/netlify --version
                 '''
             }
         }
