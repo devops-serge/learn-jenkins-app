@@ -89,11 +89,35 @@ pipeline {
                 echo "Deploy staging"
                 npm install netlify-cli@20.1.1 node-jq
                 node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
-                node_modules/.bin/node-jq -r ".deploy_url" deploy-output.json
+                node_modules/.bin/netlify deploy --dir=build --json > deploy-output_staging.json
                 '''
             }
+            script {
+                env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' ddeploy-output_staging.json", returnStdout: true)
+            }
         }
+    //             stage('E2E staging') {
+    //                 agent {
+    //                     docker {
+    //                         image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+    //                         reuseNode true
+    //                     }
+    //                 }
+    //                 environment {
+    //                     CI_ENVIRONMENT_URL = '${env.STAGING_URL}'
+    //                 }
+    //                 steps {
+    //                     sh '''
+    //                     echo "E2E Stage"
+    //                     // npx playwright test --reporter=html
+    //                     '''
+    //                 }
+    //                 post {
+    //                     always {
+    //                         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+    //                     }
+    //                 }
+    //             }
         stage('Approval') {
             steps {
                 timeout(time: 60, unit: 'SECONDS') {
@@ -114,14 +138,17 @@ pipeline {
             }
             steps {
                 sh '''
-                echo "Deploy stage"
-                npm install netlify-cli@20.1.1
+                echo "Deploy production"
+                npm install netlify-cli@20.1.1 node-jq
                 node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --prod --json
+                node_modules/.bin/netlify deploy --dir=build --prod --json > deploy_output_prod.json
                 '''
             }
+            script {
+                env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output_prod.json", returnStdout: true)
+            }
         }
-    //             stage('E2E') {
+    //             stage('E2E production') {
     //                 agent {
     //                     docker {
     //                         image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
@@ -129,7 +156,7 @@ pipeline {
     //                     }
     //                 }
     //                 environment {
-    //                     CI_ENVIRONMENT_URL = 'https://iridescent-trifle-2bfeba.netlify.app'
+    //                     CI_ENVIRONMENT_URL = '${env.PRODUCTION_URL}'
     //                 }
     //                 steps {
     //                     sh '''
