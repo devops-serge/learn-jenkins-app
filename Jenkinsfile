@@ -7,6 +7,14 @@ pipeline {
     }
 
     stages {
+        stage('Docker') {
+            steps {
+                sh '''
+                docker build -t my-playwriht:0.0.1 .
+                '''
+            }
+        }
+
         stage('Build') {
             agent {
                 docker {
