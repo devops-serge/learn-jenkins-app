@@ -91,9 +91,9 @@ pipeline {
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output_staging.json
                 '''
-            }
-            script {
-                env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' ddeploy-output_staging.json", returnStdout: true)
+                script {
+                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' ddeploy-output_staging.json", returnStdout: true)
+                }
             }
         }
     //             stage('E2E staging') {
@@ -143,9 +143,9 @@ pipeline {
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --prod --json > deploy_output_prod.json
                 '''
-            }
-            script {
-                env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output_prod.json", returnStdout: true)
+                script {
+                    env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output_prod.json", returnStdout: true)
+                }
             }
         }
     //             stage('E2E production') {
