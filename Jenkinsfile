@@ -18,7 +18,7 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'my-playwriht:0.0.1'
                     reuseNode true
                 }
             }
@@ -39,7 +39,7 @@ pipeline {
                 stage('Test') {
                     agent {
                         docker {
-                            image 'node:18-alpine'
+                            image 'my-playwriht:0.0.1'
                             reuseNode true
                         }
                     }
@@ -60,14 +60,13 @@ pipeline {
                 stage('E2E') {
                     agent {
                         docker {
-                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            image 'my-playwriht:0.0.1'
                             reuseNode true
                         }
                     }
                     steps {
                         sh '''
                         echo "E2E Stage"
-                        npm install serve
                         node_modules/.bin/serve -s build &
                         sleep 10
                         npx playwright test --reporter=html
@@ -84,7 +83,7 @@ pipeline {
         stage('Deploy staging') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'my-playwriht:0.0.1'
                     reuseNode true
                 }
             }
@@ -94,7 +93,6 @@ pipeline {
             steps {
                 sh '''
                 echo "Deploy staging"
-                npm install netlify-cli@20.1.1 node-jq
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output_staging.json
                 '''
@@ -135,7 +133,7 @@ pipeline {
         stage('Deploy production') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'my-playwriht:0.0.1'
                     reuseNode true
                 }
             }
@@ -145,12 +143,11 @@ pipeline {
             steps {
                 sh '''
                 echo "Deploy production"
-                npm install netlify-cli@20.1.1 node-jq
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --prod --json > deploy_output_prod.json
                 '''
                 script {
-                    env.PRODUCTION_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output_prod.json", returnStdout: true)
+                    env.PRODUCTION_URL = sh(script: "./node_modules/.bin/node-jq -r '.deploy_url' deploy_output_prod.json", returnStdout: true)
                 }
             }
         }
