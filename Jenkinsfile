@@ -67,7 +67,7 @@ pipeline {
                     steps {
                         sh '''
                         echo "E2E Stage"
-                        node_modules/.bin/serve -s build &
+                        serve -s build &
                         sleep 10
                         npx playwright test --reporter=html
                         '''
@@ -93,11 +93,11 @@ pipeline {
             steps {
                 sh '''
                 echo "Deploy staging"
-                node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --json > deploy-output_staging.json
+                netlify status
+                netlify deploy --dir=build --json > deploy-output_staging.json
                 '''
                 script {
-                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output_staging.json", returnStdout: true)
+                    env.STAGING_URL = sh(script: "node-jq -r '.deploy_url' deploy-output_staging.json", returnStdout: true)
                 }
             }
         }
@@ -143,11 +143,11 @@ pipeline {
             steps {
                 sh '''
                 echo "Deploy production"
-                node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --prod --json > deploy_output_prod.json
+                netlify status
+                netlify deploy --dir=build --prod --json > deploy_output_prod.json
                 '''
                 script {
-                    env.PRODUCTION_URL = sh(script: "./node_modules/.bin/node-jq -r '.deploy_url' deploy_output_prod.json", returnStdout: true)
+                    env.PRODUCTION_URL = sh(script: "node-jq -r '.deploy_url' deploy_output_prod.json", returnStdout: true)
                 }
             }
         }
